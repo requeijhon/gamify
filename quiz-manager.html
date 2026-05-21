@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gamify Training – Criar Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#e6edf4;--bg-inner:#dde6f0;--white:#ffffff;
+  --navy:#0d1b2e;--navy-mid:#1e2d42;
+  --teal:#136f71;--teal-dark:#0d5557;--teal-light:#e8f4f4;
+  --blue:#2463eb;--blue-dark:#1a4fd1;--blue-light:#eef3fd;
+  --gray:#6b7a8f;--gray-light:#f1f5f9;--border:#d1dbe8;
+  --danger:#dc2626;--success:#16a34a;--warning:#d97706;
+  --radius-sm:8px;--radius:14px;--radius-lg:20px;
+  --shadow:0 4px 24px rgba(13,27,46,.08);--shadow-lg:0 8px 40px rgba(13,27,46,.12);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;}
+nav{background:var(--white);border-radius:var(--radius-lg);margin:16px 24px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.nav-logo{background:var(--teal);color:white;font-size:10px;font-weight:800;letter-spacing:.5px;padding:6px 8px;border-radius:8px;line-height:1.3;text-align:center;}
+.nav-name{font-weight:700;font-size:15px;color:var(--navy);}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{font-size:14px;font-weight:500;color:var(--gray);text-decoration:none;cursor:pointer;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--navy);}
+.main-wrap{padding:0 24px 40px;max-width:1140px;margin:0 auto;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.page-title{font-size:26px;font-weight:800;color:var(--navy);}
+.page-subtitle{font-size:14px;color:var(--gray);margin-top:2px;}
+.header-actions{display:flex;gap:10px;flex-shrink:0;}
+.creator-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;}
+.card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.icon-teal{background:var(--teal-light);color:var(--teal);}
+.icon-blue{background:var(--blue-light);color:var(--blue);}
+label{display:block;font-size:13px;font-weight:600;color:var(--navy-mid);margin-bottom:6px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--navy);background:var(--white);transition:border-color .2s,box-shadow .2s;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(19,111,113,.1);}
+textarea{resize:vertical;min-height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-group{margin-bottom:14px;}
+.question-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;transition:border-color .2s,box-shadow .2s;}
+.question-item:hover{border-color:var(--teal);box-shadow:0 2px 12px rgba(19,111,113,.08);}
+.question-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.question-num{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--teal);}
+.q-pill{background:var(--teal-light);padding:3px 10px;border-radius:20px;font-size:12px;}
+.q-type-pill{background:var(--bg-inner);color:var(--gray);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.question-actions{display:flex;gap:8px;}
+.btn-icon{width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--gray);transition:all .2s;}
+.btn-icon:hover{border-color:var(--danger);color:var(--danger);background:#fef2f2;}
+.alternatives-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.alt-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--gray-light);cursor:pointer;transition:all .2s;}
+.alt-item.correct{border-color:var(--success);background:#f0fdf4;}
+.alt-item input[type=radio]{accent-color:var(--success);flex-shrink:0;pointer-events:none;}
+.alt-item input[type=text]{border:none;background:transparent;padding:0;font-size:13px;flex:1;cursor:text;}
+.alt-item input[type=text]:focus{box-shadow:none;}
+.alt-label{width:22px;height:22px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--navy-mid);flex-shrink:0;}
+.alt-item.correct .alt-label{background:var(--success);color:white;}
+.correct-hint{margin-top:8px;font-size:12px;color:var(--gray);font-weight:600;}
+.correct-hint.is-set{color:var(--success);}
+.add-question-btn{width:100%;padding:14px;border:2px dashed var(--teal);border-radius:var(--radius);background:var(--teal-light);color:var(--teal);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;}
+.add-question-btn:hover{background:var(--teal);color:white;}
+.badge-tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);margin:4px 4px 4px 0;background:var(--white);color:var(--gray);}
+.badge-tag.selected{background:var(--teal);color:white;border-color:var(--teal);}
+.progress-bar{height:6px;background:var(--bg-inner);border-radius:3px;margin:8px 0 4px;}
+.progress-fill{height:100%;border-radius:3px;background:var(--teal);transition:width .3s;}
+.btn-primary{width:100%;padding:13px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s,transform .1s;margin-top:6px;}
+.btn-primary:hover{background:var(--blue-dark);transform:translateY(-1px);}
+.btn-secondary{width:100%;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--white);color:var(--navy);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px;}
+.btn-secondary:hover{border-color:var(--navy);}
+.btn-cancel{padding:10px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--white);color:var(--navy);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-cancel:hover{border-color:var(--navy);}
+.btn-publish{padding:10px 24px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s,transform .1s;}
+.btn-publish:hover{background:var(--blue-dark);transform:translateY(-1px);}
+.info-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:7px 0;border-bottom:1px solid var(--bg-inner);color:var(--gray);}
+.info-row:last-child{border-bottom:none;}
+.info-row strong{color:var(--navy);font-weight:600;}
+#msg-global{text-align:center;font-size:14px;font-weight:600;min-height:20px;margin-bottom:12px;}
+@media(max-width:860px){.creator-layout{grid-template-columns:1fr;}.alternatives-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+
+/* MODAL DE SAÍDA COM RASCUNHO */
+.modalOverlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 27, 46, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 99999;
+}
+
+.modalOverlay.show{
+  display: flex;
+}
+
+.modalBox{
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  animation: modalPop .25s ease;
+}
+
+@keyframes modalPop{
+  from{
+    transform: scale(.96);
+    opacity: 0;
+  }
+  to{
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modalBox h2{
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #0d1b2e;
+}
+
+.modalBox p{
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4b5563;
+  margin-bottom: 22px;
+}
+
+.modalAcoes{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btnModal{
+  flex: 1 1 160px;
+  min-width: 160px;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.btnModalSec{
+  background: #fff;
+  color: #0d1b2e;
+  border: 1.5px solid #d1dbe8;
+}
+
+.btnModalWarn{
+  background: #2563EB;
+  color: #fff;
+}
+
+.btnModalDanger{
+  background: #dc2626;
+  color: #fff;
+  flex: 1 1 100%;
+}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo"></div>
+    <span class="nav-name">Gamify Training</span>
+  </div>
+  <div class="nav-links">
+    <a id="nav-voltar"> Sair </a>
+  </div>
+</nav>
+
+<div class="main-wrap">
+  <div class="page-header">
+    <div>
+      <div class="page-title" id="page-title-text">Criar Quiz</div>
+      <div class="page-subtitle">Configure as perguntas, alternativas e parâmetros do quiz</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-cancel" id="btn-cancelar">Cancelar</button>
+      <button class="btn-publish" id="btn-publicar-topo">Publicar Quiz ✓</button>
+    </div>
+  </div>
+
+  <p id="msg-global"></p>
+
+  <div class="creator-layout">
+    <!-- COLUNA PRINCIPAL -->
+    <div>
+      <div class="card">
+        <div class="card-title"><div class="icon icon-teal">📋</div> Informações gerais</div>
+        <div class="form-group">
+          <label>Título do quiz *</label>
+          <input type="text" id="tituloQuiz" placeholder="Ex.: Fundamentos de LGPD – Módulo 1">
+        </div>
+        <div class="form-row">
+          <div>
+            <label>XP por acerto</label>
+            <input type="number" id="xpPorAcerto" value="10" min="0">
+          </div>
+          <div>
+            <label>Bônus XP por tempo rápido</label>
+            <input type="number" id="bonusTempoRapido" value="5" min="0">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Tempo limite para bônus (seg)</label>
+            <input type="number" id="tempoLimiteBonus" value="30" min="5">
+          </div>
+          <div>
+            <label>Tempo por pergunta (seg)</label>
+            <input type="number" id="tempoPorPergunta" value="30" min="5" max="300">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><div class="icon icon-blue">❓</div> Perguntas</div>
+        <div id="questions-container"></div>
+        <button class="add-question-btn" id="btn-add-q">
+          <span style="font-size:18px">+</span> Adicionar nova pergunta
+        </button>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div>
+      <div class="card">
+        <div class="card-title"><div class="icon icon-blue">📊</div> Status do quiz</div>
+        <div class="info-row"><span>Perguntas</span><strong id="st-total">0</strong></div>
+        <div class="info-row"><span>Com gabarito</span><strong id="st-gabarito">0 / 0</strong></div>
+        <div class="info-row"><span>Modo</span><strong id="st-modo">Novo quiz</strong></div>
+        <div style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:6px;">
+            <span style="color:var(--gray)">Completude</span>
+            <span style="color:var(--teal)" id="st-pct">0%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="st-bar" style="width:0%"></div></div>
+        </div>
+        <button class="btn-secondary" id="btn-rascunho">💾 Salvar rascunho</button>
+        <button class="btn-primary" id="btn-publicar">🚀 Publicar quiz</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><div class="icon icon-teal">👥</div> Setor-alvo</div>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:10px;">O quiz será visível para funcionários do mesmo setor do gerente.</p>
+        <span class="badge-tag selected" id="setor-badge">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modalOverlay" id="modalSaidaRascunho">
+  <div class="modalBox">
+    <h2 id="modalSaidaTitulo">Sair do editor</h2>
+    <p id="modalSaidaTexto">
+      Existe um rascunho salvo deste quiz. O que você deseja fazer?
+    </p>
+
+    <div class="modalAcoes">
+      <button id="btnContinuarEditando" class="btnModal btnModalSec">
+        Continuar editando
+      </button>
+
+      <button id="btnSairMantendo" class="btnModal btnModalWarn">
+        Sair e manter rascunho
+      </button>
+
+      <button id="btnSairExcluindo" class="btnModal btnModalDanger">
+        Sair e excluir rascunho
+      </button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { pegarQuizzes, salvarQuizzes } from './src/js/storage.js'
+
+const $ = id => document.getElementById(id)
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+}
+
+function parseSeguro(chave) {
+  try {
+    return JSON.parse(localStorage.getItem(chave) || 'null')
+  } catch {
+    return null
+  }
+}
+
+const usuario = parseSeguro('usuarioLogado')
+if (!usuario) {
+  window.location.href = 'login.html'
+}
+
+const quizEdicao = parseSeguro('quizEdicao')
+
+if ($('setor-badge')) {
+  $('setor-badge').textContent = usuario?.setor || 'Sem setor'
+}
+
+const modalSaidaRascunho = $('modalSaidaRascunho')
+const btnContinuarEditando = $('btnContinuarEditando')
+const btnSairMantendo = $('btnSairMantendo')
+const btnSairExcluindo = $('btnSairExcluindo')
+
+function abrirModalSaidaRascunho() {
+  if (modalSaidaRascunho) {
+    modalSaidaRascunho.classList.add('show')
+  }
+}
+
+function fecharModalSaidaRascunho() {
+  if (modalSaidaRascunho) {
+    modalSaidaRascunho.classList.remove('show')
+  }
+}
+
+function redirecionarPainel() {
+  if (usuario?.tipo === 'gerente') {
+    window.location.href = 'gerente.html'
+  } else {
+    window.location.href = 'dono.html'
+  }
+}
+
+function sairMantendoRascunho() {
+  localStorage.removeItem('quizEdicao')
+  redirecionarPainel()
+}
+
+function sairExcluindoRascunho() {
+  localStorage.removeItem('quizEdicao')
+  localStorage.removeItem('quizRascunho')
+  redirecionarPainel()
+}
+
+function confirmarSaidaQuizManager() {
+  const temRascunho = !!localStorage.getItem('quizRascunho')
+
+  if (!temRascunho) {
+    sairMantendoRascunho()
+    return
+  }
+
+  abrirModalSaidaRascunho()
+}
+
+if ($('nav-voltar')) {
+  $('nav-voltar').addEventListener('click', e => {
+    e.preventDefault()
+    confirmarSaidaQuizManager()
+  })
+}
+
+if ($('btn-cancelar')) {
+  $('btn-cancelar').addEventListener('click', e => {
+    e.preventDefault()
+    confirmarSaidaQuizManager()
+  })
+}
+
+if (btnContinuarEditando) {
+  btnContinuarEditando.addEventListener('click', () => {
+    fecharModalSaidaRascunho()
+  })
+}
+
+if (btnSairMantendo) {
+  btnSairMantendo.addEventListener('click', () => {
+    sairMantendoRascunho()
+  })
+}
+
+if (btnSairExcluindo) {
+  btnSairExcluindo.addEventListener('click', () => {
+    sairExcluindoRascunho()
+  })
+}
+
+if (modalSaidaRascunho) {
+  modalSaidaRascunho.addEventListener('click', e => {
+    if (e.target === modalSaidaRascunho) {
+      fecharModalSaidaRascunho()
+    }
+  })
+}
+
+let qCount = 0
+
+function addQuestion(dados = null) {
+  qCount++
+  const n = qCount
+  const container = $('questions-container')
+  if (!container) return
+
+  const div = document.createElement('div')
+  div.className = 'question-item'
+  div.dataset.qid = n
+
+  const letras = ['A', 'B', 'C', 'D']
+  const respostas = Array.isArray(dados?.respostas) ? dados.respostas : ['', '', '', '']
+  const nAlts = Math.min(Math.max(respostas.length, 4), 4)
+  const correta = Number.isInteger(dados?.correta) ? dados.correta : null
+  const pergunta = escapeHtml(dados?.pergunta || '')
+
+  div.innerHTML = `
+    <div class="question-header">
+      <div class="question-num">
+        <span class="q-pill">Pergunta ${n}</span>
+        <span class="q-type-pill">Múltipla escolha</span>
+      </div>
+      <div class="question-actions">
+        <button type="button" class="btn-icon btn-del" title="Excluir">🗑</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:8px">
+      <label>Enunciado *</label>
+      <input type="text" class="q-enunciado" placeholder="Digite o enunciado..." value="${pergunta}">
+    </div>
+
+    <div class="alternatives-grid" data-correct="${correta ?? ''}">
+      ${letras.slice(0, nAlts).map((l, i) => `
+        <div class="alt-item ${i === correta ? 'correct' : ''}" data-idx="${i}">
+          <div class="alt-label">${l}</div>
+          <input type="radio" ${i === correta ? 'checked' : ''}>
+          <input type="text" placeholder="Alternativa ${l}" value="${escapeHtml(respostas[i] || '')}">
+        </div>
+      `).join('')}
+    </div>
+
+    <p class="correct-hint ${correta !== null ? 'is-set' : ''}">
+      ${correta !== null ? `✓ Alternativa correta: ${letras[correta]}` : 'Clique em uma alternativa para marcá-la como correta'}
+    </p>
+  `
+
+  const btnDel = div.querySelector('.btn-del')
+  if (btnDel) {
+    btnDel.addEventListener('click', e => {
+      e.preventDefault()
+      div.remove()
+      renumerarPerguntas()
+      atualizarStatus()
+    })
+  }
+
+  div.querySelectorAll('.alt-item').forEach(altEl => {
+    altEl.addEventListener('click', e => {
+      if (e.target.tagName === 'INPUT' && e.target.type === 'text') return
+
+      const grid = altEl.closest('.alternatives-grid')
+      grid.querySelectorAll('.alt-item').forEach(a => {
+        a.classList.remove('correct')
+        const radio = a.querySelector('input[type="radio"]')
+        if (radio) radio.checked = false
+      })
+
+      altEl.classList.add('correct')
+      const radio = altEl.querySelector('input[type="radio"]')
+      if (radio) radio.checked = true
+
+      const idx = parseInt(altEl.dataset.idx, 10)
+      grid.dataset.correct = idx
+
+      const hint = altEl.closest('.question-item').querySelector('.correct-hint')
+      if (hint) {
+        hint.textContent = `✓ Alternativa correta: ${letras[idx]}`
+        hint.classList.add('is-set')
+      }
+
+      atualizarStatus()
+    })
+  })
+
+  container.appendChild(div)
+  atualizarStatus()
+}
+
+function renumerarPerguntas() {
+  qCount = 0
+  document.querySelectorAll('.question-item').forEach(item => {
+    qCount++
+    item.dataset.qid = qCount
+    const pill = item.querySelector('.q-pill')
+    if (pill) pill.textContent = `Pergunta ${qCount}`
+  })
+}
+
+function atualizarStatus() {
+  const items = document.querySelectorAll('.question-item')
+  const total = items.length
+  let comGabarito = 0
+
+  items.forEach(item => {
+    const grid = item.querySelector('.alternatives-grid')
+    const c = grid?.dataset?.correct
+    if (c !== '' && c !== undefined) comGabarito++
+  })
+
+  const titulo = $('tituloQuiz')?.value.trim() || ''
+  const pct = Math.min(100, Math.round(
+    (titulo ? 25 : 0) +
+    (total > 0 ? 25 : 0) +
+    (total > 0 ? (comGabarito / total) * 50 : 0)
+  ))
+
+  if ($('st-total')) $('st-total').textContent = total
+  if ($('st-gabarito')) $('st-gabarito').textContent = `${comGabarito} / ${total}`
+  if ($('st-pct')) $('st-pct').textContent = pct + '%'
+  if ($('st-bar')) $('st-bar').style.width = pct + '%'
+}
+
+function coletarDados() {
+  const items = document.querySelectorAll('.question-item')
+  const perguntas = []
+  const erros = []
+
+  items.forEach((item, i) => {
+    const enunciado = item.querySelector('.q-enunciado')?.value.trim() || ''
+    const altInputs = [...item.querySelectorAll('.alt-item input[type="text"]')]
+    const respostas = altInputs.map(inp => inp.value.trim())
+    const corretaRaw = item.querySelector('.alternatives-grid')?.dataset?.correct
+    const correta = corretaRaw !== '' && corretaRaw !== undefined ? parseInt(corretaRaw, 10) : null
+
+    if (!enunciado) erros.push(`Pergunta ${i + 1}: enunciado vazio`)
+    if (respostas.some(r => !r)) erros.push(`Pergunta ${i + 1}: há alternativa vazia`)
+    if (correta === null) erros.push(`Pergunta ${i + 1}: alternativa correta não marcada`)
+
+    perguntas.push({ pergunta: enunciado, respostas, correta })
+  })
+
+  return { perguntas, erros }
+}
+
+function mostrarMsg(txt, ok = false) {
+  const el = $('msg-global')
+  if (!el) return
+  el.style.color = ok ? '#16a34a' : '#dc2626'
+  el.textContent = txt
+  setTimeout(() => {
+    el.textContent = ''
+  }, 4000)
+}
+
+function montar() {
+  return {
+    id: quizEdicao?.id || crypto.randomUUID(),
+    titulo: $('tituloQuiz')?.value.trim() || '',
+    empresaId: usuario.empresaId,
+    setor: usuario.setor,
+    arquivado: quizEdicao?.arquivado ?? false,
+    xpAtivo: quizEdicao?.xpAtivo ?? true,
+    configXp: {
+      xpPorAcerto: Number($('xpPorAcerto')?.value || 0),
+      bonusTempoRapido: Number($('bonusTempoRapido')?.value || 0),
+      tempoLimiteBonus: Number($('tempoLimiteBonus')?.value || 0)
+    },
+    tempoPorPergunta: Number($('tempoPorPergunta')?.value || 0)
+  }
+}
+
+function preencherFormulario(quiz) {
+  if (!quiz) return
+
+  if ($('tituloQuiz')) $('tituloQuiz').value = quiz.titulo || ''
+
+  if (quiz.configXp) {
+    if ($('xpPorAcerto')) $('xpPorAcerto').value = quiz.configXp.xpPorAcerto ?? 10
+    if ($('bonusTempoRapido')) $('bonusTempoRapido').value = quiz.configXp.bonusTempoRapido ?? 5
+    if ($('tempoLimiteBonus')) $('tempoLimiteBonus').value = quiz.configXp.tempoLimiteBonus ?? 30
+  }
+
+  if ($('tempoPorPergunta')) {
+    $('tempoPorPergunta').value = quiz.tempoPorPergunta ?? 30
+  }
+
+  if ($('questions-container')) $('questions-container').innerHTML = ''
+  qCount = 0
+
+  ;(quiz.perguntas || []).forEach(p => addQuestion(p))
+  atualizarStatus()
+}
+
+function carregarRascunho() {
+  if (quizEdicao) return
+
+  const rascunho = parseSeguro('quizRascunho')
+  if (!rascunho || typeof rascunho !== 'object') return
+
+  preencherFormulario(rascunho)
+
+  if ($('st-modo')) $('st-modo').textContent = 'Rascunho carregado'
+  mostrarMsg('Rascunho carregado automaticamente.', true)
+}
+
+if (quizEdicao) {
+  if ($('page-title-text')) $('page-title-text').textContent = 'Editar Quiz'
+  if ($('st-modo')) $('st-modo').textContent = 'Editando'
+  preencherFormulario(quizEdicao)
+} else {
+  carregarRascunho()
+}
+
+if ($('tituloQuiz')) $('tituloQuiz').addEventListener('input', atualizarStatus)
+
+if ($('btn-add-q')) {
+  $('btn-add-q').addEventListener('click', e => {
+    e.preventDefault()
+    addQuestion()
+  })
+}
+
+if ($('btn-rascunho')) {
+  $('btn-rascunho').addEventListener('click', e => {
+    e.preventDefault()
+
+    const { perguntas } = coletarDados()
+    const rascunho = { ...montar(), perguntas }
+
+    localStorage.setItem('quizRascunho', JSON.stringify(rascunho))
+
+    if ($('st-modo')) $('st-modo').textContent = 'Rascunho salvo'
+    mostrarMsg('Rascunho salvo com sucesso!', true)
+  })
+}
+
+let publicandoQuiz = false
+
+function publicar() {
+  if (publicandoQuiz) return
+  publicandoQuiz = true
+
+  const btnPublicar = $('btn-publicar')
+  const btnPublicarTopo = $('btn-publicar-topo')
+
+  if (btnPublicar) btnPublicar.disabled = true
+  if (btnPublicarTopo) btnPublicarTopo.disabled = true
+
+  const liberarPublicacao = () => {
+    publicandoQuiz = false
+    if (btnPublicar) btnPublicar.disabled = false
+    if (btnPublicarTopo) btnPublicarTopo.disabled = false
+  }
+
+  const titulo = $('tituloQuiz')?.value.trim() || ''
+  if (!titulo) {
+    mostrarMsg('Informe o título do quiz')
+    liberarPublicacao()
+    return
+  }
+
+  const { perguntas, erros } = coletarDados()
+
+  if (perguntas.length === 0) {
+    mostrarMsg('Adicione ao menos uma pergunta')
+    liberarPublicacao()
+    return
+  }
+
+  if (erros.length > 0) {
+    mostrarMsg(erros[0])
+    liberarPublicacao()
+    return
+  }
+
+  const quizBase = montar()
+  const quiz = {
+    ...quizBase,
+    id: quizEdicao?.id || quizBase.id || crypto.randomUUID(),
+    arquivado: quizEdicao?.arquivado ?? false,
+    xpAtivo: quizEdicao?.xpAtivo ?? true,
+    perguntas
+  }
+
+  const quizzes = pegarQuizzes()
+
+  const tituloDuplicado = quizzes.some(q =>
+    String(q.id) !== String(quiz.id) &&
+    String(q.empresaId) === String(quiz.empresaId) &&
+    String(q.setor).trim().toLowerCase() === String(quiz.setor).trim().toLowerCase() &&
+    String(q.titulo).trim().toLowerCase() === String(quiz.titulo).trim().toLowerCase()
+  )
+
+  if (tituloDuplicado) {
+    mostrarMsg('Já existe um quiz com esse título neste setor.')
+    liberarPublicacao()
+    return
+  }
+
+  const idx = quizzes.findIndex(q => String(q.id) === String(quiz.id))
+
+  if (idx !== -1) {
+    quizzes[idx] = quiz
+  } else {
+    quizzes.push(quiz)
+  }
+
+  salvarQuizzes(quizzes)
+  localStorage.removeItem('quizRascunho')
+  localStorage.removeItem('quizEdicao')
+
+  if ($('st-modo')) {
+    $('st-modo').textContent = 'Publicado'
+  }
+
+  mostrarMsg('Quiz publicado com sucesso!', true)
+
+  setTimeout(() => {
+    redirecionarPainel()
+  }, 1000)
+}
+
+if ($('btn-publicar')) {
+  $('btn-publicar').addEventListener('click', e => {
+    e.preventDefault()
+    publicar()
+  })
+}
+
+if ($('btn-publicar-topo')) {
+  $('btn-publicar-topo').addEventListener('click', e => {
+    e.preventDefault()
+    publicar()
+  })
+}
+
+atualizarStatus()
+</script>
+</body>
+</html>

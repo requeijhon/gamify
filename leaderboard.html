@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard</title>
+  <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body>
+
+  <header class="gt-header gt-header--internal" aria-label="Cabeçalho principal">
+    <a href="dashboard.html" class="gt-brand">
+      <img src="./img/logo sem texto.jpg" alt="Logo da Gamify Training" class="gt-brand__logo">
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Painel da plataforma</span>
+      </div>
+    </a>
+
+    <nav class="gt-nav" aria-label="Navegação principal">
+    </nav>
+
+    <div class="gt-header__actions">
+      <a href="index.html" class="gt-header__cta">Sair</a>
+    </div>
+  </header>
+
+  <div class="dashboard">
+
+    <div class="topo">
+      <h1>Leaderboard</h1>
+      <button id="voltarPagina">Voltar</button>
+    </div>
+
+    <div class="info">
+      <h2 id="tituloLeaderboard"></h2>
+      <p id="subtituloLeaderboard"></p>
+    </div>
+
+    <div class="cardPainel">
+      <div style="overflow-x: auto;">
+        <table class="tabelaLeaderboard" id="tabelaLeaderboard">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nome</th>
+              <th>Setor</th>
+              <th>Nível</th>
+              <th>XP</th>
+              <th>Quizzes Feitos</th>
+              <th>Quizzes Pendentes</th>
+              <th>Taxa de Acerto</th>
+              <th>Tempo Médio</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardBody"></tbody>
+        </table>
+      </div>
+
+      <p id="mensagemLeaderboard"></p>
+    </div>
+
+  </div>
+
+  <script type="module" src="./src/js/leaderboard.js"></script>
+</body>
+</html>

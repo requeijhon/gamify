@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+  <title>Gerenciar Quizzes</title>
+
+  <link rel="stylesheet"
+  href="./src/css/style.css">
+</head>
+<body>
+
+  <header class="gt-header gt-header--internal" aria-label="Cabeçalho principal">
+    <a href="dashboard.html" class="gt-brand">
+      <img src="./img/logo sem texto.jpg" alt="Logo da Gamify Training" class="gt-brand__logo">
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Painel da plataforma</span>
+      </div>
+    </a>
+
+    <nav class="gt-nav" aria-label="Navegação principal">
+      <a href="dashboard.html" class="is-active">Painel</a>
+      <a href="leaderboard.html">Ranking</a>
+      <a href="gerenciar-quizzes.html">Quizzes</a>
+    </nav>
+
+    <div class="gt-header__actions">
+      <a href="index.html" class="gt-header__cta">Sair</a>
+    </div>
+  </header>
+
+  <div class="dashboard">
+
+    <div class="topo">
+
+      <h1>Gerenciar Quizzes</h1>
+
+      <button onclick="window.location.href='gerente.html'">
+  Voltar
+</button>
+
+    </div>
+
+    <div
+      class="gridQuizzes"
+      id="gridQuizzes"
+    ></div>
+
+  </div>
+  <div class="modalOverlay" id="modalExcluirQuiz">
+  <div class="modalBox">
+    <h2 id="modalTitulo">Excluir quiz</h2>
+    <p id="modalTexto">
+      Deseja excluir este quiz?
+    </p>
+
+    <div class="modalAcoes">
+
+  <button
+    id="btnCancelarModal"
+    class="btnModal btnModalSec"
+  >
+    Cancelar
+  </button>
+
+  <button
+    id="btnArquivarQuiz"
+    class="btnModal btnModalWarn"
+  >
+    Arquivar quiz
+  </button>
+
+  <button
+    id="btnArquivarQuizXp"
+    class="btnModal btnModalDanger"
+  >
+    Arquivar quiz + remover XP
+  </button>
+
+</div>
+  <script type="module"
+  src="./src/js/gerenciarQuizzes.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamify Training — Criar Conta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body>
+
+  <header class="gt-header" aria-label="Cabeçalho principal">
+    <a href="index.html" class="gt-brand">
+      <img src="./img/logo sem texto.jpg" alt="Logo da Gamify Training" class="gt-brand__logo">
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Treinamento corporativo gamificado</span>
+      </div>
+    </a>
+
+    <nav class="gt-nav" aria-label="Navegação principal">
+      <a href="index.html">Início</a>
+      <a href="login.html">Login</a>
+      <a href="cadastro.html" class="is-active">Cadastro</a>
+    </nav>
+
+    <div class="gt-header__actions">
+      <a href="login.html" class="gt-header__cta">Entrar</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card" style="max-width:460px;">
+      <div>
+        <h1 style="color:var(--teal); font-size:24px; font-weight:800; margin-bottom:4px;">Criar Conta</h1>
+        <p style="font-size:13px; color:var(--text-3)">Preencha seus dados para acessar a plataforma</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div><label for="nome">Nome completo</label><input type="text" id="nome" placeholder="Seu nome"></div>
+        <div><label for="email">Email</label><input type="email" id="email" placeholder="seu@email.com"></div>
+        <div><label for="senha">Senha</label><input type="password" id="senha" placeholder="••••••••"></div>
+        <div>
+          <label for="setor">Setor</label>
+          <select id="setor"><option value="">Selecione o setor</option></select>
+        </div>
+      </div>
+
+      <button id="btnCadastrar" style="width:100%; background:var(--teal); box-shadow:var(--shadow-teal); padding:13px;">
+        Criar conta
+      </button>
+
+      <p id="mensagem" style="text-align:center;"></p>
+    </div>
+  </div>
+  <script type="module" src="./src/js/cadastro.js"></script>
+</body>
+</html>

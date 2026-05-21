@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamify Training — Acesso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body>
+
+  <header class="gt-header" aria-label="Cabeçalho principal">
+    <a href="index.html" class="gt-brand">
+      <img src="logo sem texto.jpg" alt="Logo da Gamify Training" class="gt-brand__logo">
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Treinamento corporativo gamificado</span>
+      </div>
+    </a>
+
+    <nav class="gt-nav" aria-label="Navegação principal">
+      <a href="index.html">Início</a>
+      <a href="login.html">Login</a>
+      <a href="cadastro.html" class="is-active">Cadastro</a>
+    </nav>
+
+    <div class="gt-header__actions">
+      <a href="login.html" class="gt-header__cta">Entrar</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div>
+        <h1 style="color:var(--teal); font-size:24px; font-weight:800; margin-bottom:4px;">Código de Acesso</h1>
+        <p style="font-size:13px; color:var(--text-3)">Insira o código fornecido pelo seu gestor</p>
+      </div>
+
+      <div>
+        <label for="codigo">Código</label>
+        <input type="text" id="codigo" placeholder="Ex: AB12CD" style="text-transform:uppercase; letter-spacing:.1em; font-weight:600; font-size:16px;">
+      </div>
+
+      <button id="btnCodigo" style="width:100%; background:var(--teal); box-shadow:var(--shadow-teal); padding:13px;">
+        Validar Código
+      </button>
+
+      <p id="mensagem" style="text-align:center;"></p>
+
+      <a href="index.html" style="text-align:center; font-size:13px; color:var(--text-3); text-decoration:none;">
+        ← Voltar ao login
+      </a>
+    </div>
+  </div>
+  <script type="module" src="./src/js/registro.js"></script>
+</body>
+</html>

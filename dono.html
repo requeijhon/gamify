@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamify Training — Painel do Dono</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body>
+
+  <header class="gt-header gt-header--internal" aria-label="Cabeçalho principal">
+    <a href="dashboard.html" class="gt-brand">
+      <img src="./img/logo sem texto.jpg" alt="Logo da Gamify Training" class="gt-brand__logo">
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Painel da plataforma</span>
+      </div>
+    </a>
+
+    <nav class="gt-nav" aria-label="Navegação principal">
+    </nav>
+
+    <div class="gt-header__actions">
+      <a href="index.html" class="gt-header__cta">Sair</a>
+    </div>
+  </header>
+
+  <div class="dashboard">
+
+    <div class="topo">
+      <h1>Painel do Dono</h1>
+      <button id="logout">Sair</button>
+    </div>
+
+    <div class="info">
+      <h2 id="nomeUsuario"></h2>
+      <p id="empresaUsuario"></p>
+      <p id="tipoUsuario"></p>
+    </div>
+
+    <div class="cardPainel">
+      <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--teal); margin-bottom:4px;">Gerenciar acesso</p>
+      <button id="gerarGerente" style="background:var(--teal); box-shadow:var(--shadow-teal);">Gerar Código Gerente</button>
+      <button id="gerarFuncionario">Gerar Código Funcionário</button>
+      <button id="editarSetores" class="btn-ghost">Editar Setores</button>
+      <button id="abrirLeaderboard" class="btn-ghost">Ver Leaderboard</button>
+      <div id="resultado"></div>
+    </div>
+
+  </div>
+
+  <script type="module" src="./src/js/dashboardInfo.js"></script>
+  <script type="module" src="./src/js/auth.js"></script>
+  <script type="module" src="./src/js/logout.js"></script>
+  <script type="module" src="./src/js/setores.js"></script>
+</body>
+</html>

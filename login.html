@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamify Training — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="./src/css/style.css">
+</head>
+<body>
+
+  <header class="gt-header" aria-label="Cabeçalho principal">
+    <a href="index.html" class="gt-brand">
+      <img src="./img/logo sem texto.jpg" alt="Logo da Gamify Training" class="gt-brand__logo">
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Treinamento corporativo gamificado</span>
+      </div>
+    </a>
+
+    <nav class="gt-nav" aria-label="Navegação principal">
+      <a href="index.html">Início</a>
+      <a href="login.html" class="is-active">Login</a>
+      <a href="cadastro.html">Cadastro</a>
+    </nav>
+
+    <div class="gt-header__actions">
+      <a href="cadastro.html" class="gt-header__cta">Criar conta</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+
+      <div>
+        <h1 style="color:var(--teal); font-size:26px; font-weight:800; letter-spacing:-.5px; margin-bottom:4px;">
+          Gamify <span style="color:var(--text-1)">Training</span>
+        </h1>
+        <p style="font-size:13px; color:var(--text-3)">Faça login para continuar</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px; margin-top:4px;">
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="seu@email.com">
+        </div>
+        <div>
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" placeholder="••••••••">
+        </div>
+      </div>
+
+      <button id="btnLogin" style="width:100%; padding:13px; font-size:15px; margin-top:4px;">
+        Entrar
+      </button>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button id="btnCriarConta" style="background:var(--teal); box-shadow:var(--shadow-teal); width:100%;">
+          Cadastrar Usuário
+        </button>
+        <button id="btnEmpresa" class="btn-ghost" style="width:100%;">
+          Cadastrar Empresa
+        </button>
+      </div>
+
+      <p id="mensagem" style="text-align:center; font-size:14px;"></p>
+    </div>
+  </div>
+
+  <script type="module" src="./src/js/setup.js"></script>
+  <script type="module" src="./src/js/login.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Gamify Training — Painel do Gerente</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    rel="stylesheet"
+    href="./src/css/style.css"
+  >
+</head>
+
+<body>
+
+  <header
+    class="gt-header gt-header--internal"
+    aria-label="Cabeçalho principal"
+  >
+
+    <a href="dashboard.html" class="gt-brand">
+
+      <img
+        src="./img/logo sem texto.jpg"
+        alt="Logo da Gamify Training"
+        class="gt-brand__logo"
+      >
+
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Painel da plataforma</span>
+      </div>
+
+    </a>
+
+    <nav
+      class="gt-nav"
+      aria-label="Navegação principal"
+    >
+
+      <a
+        href="quiz-manager.html"
+        class="is-active"
+      >
+        Criar Quizz
+      </a>
+
+      <a href="leaderboard.html">
+        Ranking
+      </a>
+
+      <a href="gerenciar-quizzes.html">
+        Quizzes
+      </a>
+
+    </nav>
+
+    <div class="gt-header__actions">
+
+      <a
+        href="index.html"
+        class="gt-header__cta"
+      >
+        Sair
+      </a>
+
+    </div>
+
+  </header>
+
+  <div class="dashboard">
+
+    <div class="topo">
+
+      <h1>Painel do Gerente</h1>
+
+      <button id="logout">
+        Sair
+      </button>
+
+    </div>
+
+    <div
+      class="info"
+      id="infoUsuario"
+    >
+
+      <h2 id="nomeUsuario"></h2>
+
+      <p id="empresaUsuario"></p>
+
+      <p id="tipoUsuario"></p>
+
+      <p id="setorUsuario"></p>
+
+    </div>
+
+    <div class="cardPainel">
+
+      <p style="
+        font-size:12px;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:.08em;
+        color:var(--teal);
+        margin-bottom:4px;
+      ">
+        Ações
+      </p>
+
+      <button
+        id="gerarFuncionario"
+        style="
+          background:var(--teal);
+          box-shadow:var(--shadow-teal);
+        "
+      >
+        Gerar Código Funcionário
+      </button>
+
+      <button id="abrirQuiz">
+        Criar Quiz
+      </button>
+
+      <button
+        id="gerenciarQuizzes"
+        class="btn-ghost"
+      >
+        Gerenciar Quizzes
+      </button>
+
+      <button
+        id="abrirArquivados"
+        class="btn-ghost"
+      >
+        Quizzes Arquivados
+      </button>
+
+      <button
+        id="abrirLeaderboard"
+        class="btn-ghost"
+      >
+        Ver Leaderboard
+      </button>
+
+      <div id="resultado"></div>
+
+    </div>
+
+  </div>
+
+  <script type="module">
+
+    const usuario = JSON.parse(
+      localStorage.getItem('usuarioLogado')
+    )
+
+    if (!usuario) {
+      window.location.href = 'login.html'
+    }
+
+    document.getElementById('nomeUsuario').textContent =
+      `Nome: ${usuario.nome || ''}`
+
+    document.getElementById('empresaUsuario').textContent =
+      `Empresa: ${usuario.empresa || ''}`
+
+    document.getElementById('tipoUsuario').textContent =
+      `Cargo: ${usuario.tipo || ''}`
+
+    document.getElementById('setorUsuario').textContent =
+      `Setor: ${usuario.setor || ''}`
+
+    document
+      .getElementById('logout')
+      .addEventListener('click', () => {
+
+        localStorage.removeItem('usuarioLogado')
+
+        window.location.href = 'index.html'
+      })
+
+    document
+      .getElementById('abrirQuiz')
+      .addEventListener('click', () => {
+
+        window.location.href = 'quiz-manager.html'
+      })
+
+    document
+      .getElementById('gerenciarQuizzes')
+      .addEventListener('click', () => {
+
+        window.location.href = 'gerenciar-quizzes.html'
+      })
+
+    document
+      .getElementById('abrirLeaderboard')
+      .addEventListener('click', () => {
+
+        window.location.href = 'leaderboard.html'
+      })
+
+    document
+      .getElementById('abrirArquivados')
+      .addEventListener('click', () => {
+
+        window.location.href = 'quizzesArquivados.html'
+      })
+
+    document
+      .getElementById('gerarFuncionario')
+      .addEventListener('click', () => {
+
+        const codigo = Math
+          .random()
+          .toString(36)
+          .substring(2, 8)
+          .toUpperCase()
+
+        const codigos =
+          JSON.parse(localStorage.getItem('codigos')) || []
+
+        codigos.push({
+          codigo,
+          empresaId: usuario.empresaId,
+          empresa: usuario.empresa,
+          setor: usuario.setor
+        })
+
+        localStorage.setItem(
+          'codigos',
+          JSON.stringify(codigos)
+        )
+
+        const resultado =
+          document.getElementById('resultado')
+
+        resultado.innerHTML = `
+          <div style="
+            margin-top:16px;
+            padding:14px;
+            border-radius:12px;
+            background:#ecfeff;
+            border:1px solid #99f6e4;
+            color:#115e59;
+            font-weight:700;
+          ">
+            Código gerado:
+            <span style="font-size:18px">
+              ${codigo}
+            </span>
+          </div>
+        `
+      })
+
+  </script>
+
+</body>
+</html>

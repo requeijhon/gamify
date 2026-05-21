@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gamify Training – Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#e6edf4;--bg-inner:#dde6f0;--white:#ffffff;
+  --navy:#0d1b2e;--navy-mid:#1e2d42;
+  --teal:#136f71;--teal-dark:#0d5557;--teal-light:#e8f4f4;
+  --blue:#2463eb;--blue-dark:#1a4fd1;--blue-light:#eef3fd;
+  --gray:#6b7a8f;--gray-light:#f1f5f9;--border:#d1dbe8;
+  --danger:#dc2626;--success:#16a34a;--warning:#d97706;
+  --radius-sm:8px;--radius:14px;--radius-lg:20px;
+  --shadow:0 4px 24px rgba(13,27,46,.08);--shadow-lg:0 8px 40px rgba(13,27,46,.12);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;}
+
+nav{background:var(--white);border-radius:var(--radius-lg);margin:16px 24px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.nav-logo{background:var(--teal);color:white;font-size:10px;font-weight:800;letter-spacing:.5px;padding:6px 8px;border-radius:8px;line-height:1.3;text-align:center;}
+.nav-name{font-weight:700;font-size:15px;color:var(--navy);}
+
+.quiz-layout{max-width:780px;margin:0 auto;padding:0 24px 40px;}
+
+.quiz-topbar{background:var(--white);border-radius:var(--radius);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;box-shadow:var(--shadow);}
+.quiz-meta{display:flex;flex-direction:column;}
+.quiz-cat{font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:1px;}
+.quiz-name{font-size:17px;font-weight:800;color:var(--navy);}
+.quiz-stats{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.stat-chip{display:flex;align-items:center;gap:6px;background:var(--gray-light);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;color:var(--navy-mid);white-space:nowrap;}
+.stat-chip.timer{background:#fff7ed;color:#c2410c;}
+.stat-chip.timer.danger{background:#fee2e2;color:#b91c1c;}
+
+.progress-track{background:var(--white);border-radius:var(--radius);padding:16px 24px;margin-bottom:20px;box-shadow:var(--shadow);}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--gray);margin-bottom:10px;}
+.progress-label span:last-child{color:var(--teal);font-weight:700;}
+.progress-steps{display:flex;gap:6px;}
+.step-dot{flex:1;height:6px;border-radius:3px;background:var(--bg-inner);transition:background .3s;}
+.step-dot.done{background:var(--teal);}
+.step-dot.current{background:var(--blue);}
+
+.question-card{background:var(--white);border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-lg);margin-bottom:16px;}
+.q-badge{display:inline-flex;align-items:center;background:var(--teal-light);color:var(--teal);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:16px;}
+.question-text{font-size:19px;font-weight:700;color:var(--navy);line-height:1.45;margin-bottom:24px;}
+
+.options-list{display:flex;flex-direction:column;gap:10px;}
+.option{display:flex;align-items:center;gap:14px;padding:14px 18px;border:2px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;background:var(--white);}
+.option:hover:not(.answered){border-color:var(--blue);background:var(--blue-light);}
+.option.selected{border-color:var(--blue);background:var(--blue-light);}
+.option.correct{border-color:var(--success);background:#f0fdf4;}
+.option.wrong{border-color:var(--danger);background:#fef2f2;}
+.option.answered{cursor:default;}
+.opt-letter{width:32px;height:32px;border-radius:8px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--gray);flex-shrink:0;transition:all .2s;background:var(--gray-light);}
+.option.selected .opt-letter{border-color:var(--blue);background:var(--blue);color:white;}
+.option.correct .opt-letter{border-color:var(--success);background:var(--success);color:white;}
+.option.wrong   .opt-letter{border-color:var(--danger);background:var(--danger);color:white;}
+.opt-text{font-size:14px;font-weight:500;color:var(--navy);flex:1;}
+
+.feedback-banner{border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;margin-top:16px;}
+.feedback-banner.correct-fb{background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;}
+.feedback-banner.wrong-fb{background:#fef2f2;color:#b91c1c;border:1.5px solid #fecaca;}
+.feedback-banner.timeout-fb{background:#fff7ed;color:#c2410c;border:1.5px solid #fed7aa;}
+
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;padding:16px 0;}
+.btn-nav{padding:12px 24px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;}
+.btn-nav.prev{border:1.5px solid var(--border);background:var(--white);color:var(--navy);}
+.btn-nav.prev:hover{border-color:var(--navy);}
+.btn-nav.next{border:none;background:var(--blue);color:white;}
+.btn-nav.next:hover{background:var(--blue-dark);transform:translateY(-1px);}
+.btn-nav.finish{border:none;background:var(--teal);color:white;}
+.btn-nav.finish:hover{background:var(--teal-dark);transform:translateY(-1px);}
+.btn-nav:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+.skip-info{font-size:13px;color:var(--gray);font-weight:600;}
+
+/* Result modal */
+.result-overlay{display:none;position:fixed;inset:0;background:rgba(13,27,46,.5);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.result-overlay.show{display:flex;}
+.result-modal{background:var(--white);border-radius:var(--radius-lg);padding:40px;max-width:480px;width:100%;margin:20px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.score-ring{width:120px;height:120px;border-radius:50%;margin:0 auto 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.score-num{font-size:30px;font-weight:900;color:var(--navy);position:relative;line-height:1;}
+.score-pct{font-size:12px;font-weight:600;color:var(--gray);position:relative;}
+.result-title{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.result-sub{font-size:14px;color:var(--gray);margin-bottom:24px;}
+.result-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:28px;}
+.rs{background:var(--gray-light);border-radius:var(--radius-sm);padding:12px 8px;text-align:center;}
+.rs .rs-val{font-size:20px;font-weight:800;color:var(--navy);}
+.rs .rs-lbl{font-size:11px;color:var(--gray);font-weight:600;margin-top:2px;}
+.result-btns{display:flex;gap:10px;}
+.result-btns button{flex:1;padding:13px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-r-sec{background:var(--white);border:1.5px solid var(--border);color:var(--navy);}
+.btn-r-sec:hover{border-color:var(--navy);}
+.btn-r-pri{background:var(--teal);border:none;color:white;}
+.btn-r-pri:hover{background:var(--teal-dark);}
+
+.xp-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue-light);color:var(--blue);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:16px;}
+</style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-brand">
+      <div class="nav-logo"></div>
+      <span class="nav-name">Gamify Training</span>
+    </div>
+    <div class="nav-links">
+      <a id="nav-voltar">  
+        <a href="dashboard.html">Sair</a>
+      </a>
+    </div>
+  </nav>
+
+<div class="quiz-layout">
+  <div class="quiz-topbar">
+    <div class="quiz-meta">
+      <span class="quiz-cat" id="quiz-cat">Setor</span>
+      <span class="quiz-name" id="quiz-name">Carregando...</span>
+    </div>
+    <div class="quiz-stats">
+      <div class="stat-chip">❓ <span id="q-counter">—</span></div>
+      <div class="stat-chip timer" id="timer-chip">⏱ <span id="timer">00:30</span></div>
+      <div class="stat-chip">⭐ <span id="score-chips">0 pts</span></div>
+    </div>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-label">
+      <span>Progresso</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-steps" id="progress-steps"></div>
+  </div>
+
+  <div class="question-card">
+    <div class="q-badge" id="q-badge">Questão 1</div>
+    <div class="question-text" id="q-text">...</div>
+    <div class="options-list" id="options-list"></div>
+    <div id="feedback" style="display:none;"></div>
+  </div>
+
+  <div class="quiz-nav">
+    <button class="btn-nav prev" id="btn-prev" onclick="prevQuestion()" disabled>← Anterior</button>
+    <span class="skip-info" id="skip-info">Selecione uma alternativa</span>
+    <button class="btn-nav next" id="btn-next" onclick="nextQuestion()" disabled>Próxima →</button>
+  </div>
+</div>
+
+<!-- Result Modal -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-modal">
+    <div class="xp-badge" id="xp-badge">⭐ +0 XP</div>
+    <div class="score-ring">
+      <svg viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="52" stroke="#e6edf4" stroke-width="10"/>
+        <circle id="ring-arc" cx="60" cy="60" r="52" stroke="#136f71" stroke-width="10"
+          stroke-dasharray="326.7" stroke-dashoffset="326.7" stroke-linecap="round"/>
+      </svg>
+      <div class="score-num" id="final-score">0</div>
+      <div class="score-pct" id="final-total">de 0</div>
+    </div>
+    <div class="result-title" id="result-title">Resultado</div>
+    <div class="result-sub" id="result-sub">—</div>
+    <div class="result-stats">
+      <div class="rs"><div class="rs-val" id="r-acertos" style="color:var(--success)">0</div><div class="rs-lbl">Acertos</div></div>
+      <div class="rs"><div class="rs-val" id="r-erros" style="color:var(--danger)">0</div><div class="rs-lbl">Erros</div></div>
+      <div class="rs"><div class="rs-val" id="r-pct" style="color:var(--teal)">0%</div><div class="rs-lbl">Aproveitamento</div></div>
+    </div>
+    <div class="result-btns">
+      <button class="btn-r-sec" id="btn-reiniciar">🔄 Tentar novamente</button>
+      <button class="btn-r-pri" id="btn-voltar-catalogo">Voltar ao catálogo →</button>
+    </div>
+  </div>
+</div>
+
+
+<script type="module">
+import { pegarQuizzes, pegarQuizzesFeitos, salvarQuizzesFeitos } from './src/js/storage.js'
+
+const usuario = JSON.parse(localStorage.getItem('usuarioLogado') || 'null')
+if (!usuario) {
+  window.location.href = 'index.html'
+}
+
+const quizAtualRaw = localStorage.getItem('quizAtual')
+let quiz = null
+
+try {
+  const quizParseado = JSON.parse(quizAtualRaw)
+  if (quizParseado && typeof quizParseado === 'object' && quizParseado.titulo) {
+    quiz = quizParseado
+  }
+} catch (erro) {
+  quiz = null
+}
+
+if (!quiz) {
+  const quizId = Number(quizAtualRaw)
+  if (!Number.isNaN(quizId)) {
+    const todosQuizzes = pegarQuizzes().filter(q =>
+      q.empresaId === usuario.empresaId && q.setor === usuario.setor
+    )
+    quiz = todosQuizzes[quizId] || null
+  }
+}
+
+if (!quiz || !Array.isArray(quiz.perguntas) || quiz.perguntas.length === 0) {
+  window.location.href = 'quizzes.html'
+}
+
+if (quiz.arquivado === true) {
+  alert('Este quiz está arquivado e não está disponível para resposta no momento.')
+  localStorage.removeItem('quizAtual')
+  window.location.href = 'quizzes.html'
+}
+
+const TEMPO_POR_PERGUNTA = quiz.tempoPorPergunta || 30
+const LETRAS = ['A', 'B', 'C', 'D', 'E']
+
+document.getElementById('quiz-cat').textContent = quiz.setor || 'Setor'
+document.getElementById('quiz-name').textContent = quiz.titulo
+
+const modalEncerrarQuiz = document.getElementById('modalEncerrarQuiz')
+const btnEncerrarQuiz = document.getElementById('btn-encerrar-quiz')
+const btnContinuarQuiz = document.getElementById('btnContinuarQuiz')
+const btnConfirmarEncerrarQuiz = document.getElementById('btnConfirmarEncerrarQuiz')
+
+function abrirModalEncerrarQuiz() {
+  if (modalEncerrarQuiz) {
+    modalEncerrarQuiz.classList.add('show')
+  }
+}
+
+function fecharModalEncerrarQuiz() {
+  if (modalEncerrarQuiz) {
+    modalEncerrarQuiz.classList.remove('show')
+  }
+}
+
+if (btnEncerrarQuiz) {
+  btnEncerrarQuiz.addEventListener('click', () => {
+    abrirModalEncerrarQuiz()
+  })
+}
+
+if (btnContinuarQuiz) {
+  btnContinuarQuiz.addEventListener('click', () => {
+    fecharModalEncerrarQuiz()
+  })
+}
+
+if (modalEncerrarQuiz) {
+  modalEncerrarQuiz.addEventListener('click', e => {
+    if (e.target === modalEncerrarQuiz) {
+      fecharModalEncerrarQuiz()
+    }
+  })
+}
+
+let current = 0
+let answers = new Array(quiz.perguntas.length).fill(null)
+let answered = new Array(quiz.perguntas.length).fill(false)
+let pontuacaoTotal = 0
+let timeLeft = TEMPO_POR_PERGUNTA
+let timerInterval = null
+let tempoGasto = 0
+
+const stepsEl = document.getElementById('progress-steps')
+stepsEl.innerHTML = ''
+
+quiz.perguntas.forEach(() => {
+  const d = document.createElement('div')
+  d.className = 'step-dot'
+  stepsEl.appendChild(d)
+})
+
+function atualizarTimer() {
+  const el = document.getElementById('timer')
+  el.textContent = `00:${timeLeft.toString().padStart(2, '0')}`
+
+  const chip = document.getElementById('timer-chip')
+  chip.className = 'stat-chip timer' + (timeLeft <= 10 ? ' danger' : '')
+}
+
+function respostaAutomatica() {
+  if (!answered[current]) {
+    answers[current] = -1
+    answered[current] = true
+    renderQuestion()
+  }
+}
+
+function selectOpcao(i) {
+  if (answered[current]) return
+
+  clearInterval(timerInterval)
+  tempoGasto += (TEMPO_POR_PERGUNTA - timeLeft)
+  answers[current] = i
+  answered[current] = true
+
+  const q = quiz.perguntas[current]
+  const cfg = quiz.configXp || {
+    xpPorAcerto: 10,
+    bonusTempoRapido: 0,
+    tempoLimiteBonus: 30
+  }
+
+  if (i === q.correta) {
+    const xp = Number(cfg.xpPorAcerto || 10)
+    pontuacaoTotal += xp
+  }
+
+  document.getElementById('score-chips').textContent = pontuacaoTotal + ' pts'
+  renderQuestion()
+}
+
+function renderQuestion() {
+  const q = quiz.perguntas[current]
+  const total = quiz.perguntas.length
+
+  document.getElementById('q-badge').textContent = `Questão ${current + 1} de ${total}`
+  document.getElementById('q-text').textContent = q.pergunta
+  document.getElementById('q-counter').textContent = `${current + 1} de ${total}`
+  document.getElementById('progress-pct').textContent =
+    Math.round(((current + 1) / total) * 100) + '%'
+
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.className = 'step-dot' + (i < current ? ' done' : i === current ? ' current' : '')
+  })
+
+  const ol = document.getElementById('options-list')
+  ol.innerHTML = q.respostas.map((opt, i) => {
+    let cls = ''
+
+    if (answered[current]) {
+      cls = 'answered '
+      if (i === q.correta) cls += 'correct'
+      else if (answers[current] === i) cls += 'wrong'
+    } else if (answers[current] === i) {
+      cls = 'selected'
+    }
+
+    return `
+      <div class="option ${cls}" data-idx="${i}">
+        <div class="opt-letter">${LETRAS[i]}</div>
+        <div class="opt-text">${opt}</div>
+      </div>
+    `
+  }).join('')
+
+  if (!answered[current]) {
+    ol.querySelectorAll('.option').forEach(opt => {
+      opt.addEventListener('click', () => selectOpcao(parseInt(opt.dataset.idx, 10)))
+    })
+  }
+
+  const fb = document.getElementById('feedback')
+  if (answered[current]) {
+    fb.style.display = 'flex'
+
+    if (answers[current] === -1) {
+      fb.className = 'feedback-banner timeout-fb'
+      fb.innerHTML = `⏰ Tempo esgotado! A resposta correta era <strong>${LETRAS[q.correta]}</strong>.`
+    } else if (answers[current] === q.correta) {
+      fb.className = 'feedback-banner correct-fb'
+      fb.innerHTML = '✅ Correto! Muito bem!'
+    } else {
+      fb.className = 'feedback-banner wrong-fb'
+      fb.innerHTML = `❌ Incorreto. A resposta correta é <strong>${LETRAS[q.correta]}</strong>.`
+    }
+  } else {
+    fb.style.display = 'none'
+    fb.className = ''
+    fb.innerHTML = ''
+  }
+
+  const btnPrev = document.getElementById('btn-prev')
+  const btnNext = document.getElementById('btn-next')
+  const isLast = current === quiz.perguntas.length - 1
+
+  btnPrev.disabled = current === 0
+  btnNext.disabled = !answered[current]
+  btnNext.textContent = isLast ? 'Finalizar ✓' : 'Próxima →'
+  btnNext.className = 'btn-nav ' + (isLast ? 'finish' : 'next')
+
+  document.getElementById('skip-info').textContent =
+    answered[current] ? '' : 'Selecione uma alternativa para avançar'
+
+  clearInterval(timerInterval)
+
+  if (!answered[current]) {
+    timeLeft = TEMPO_POR_PERGUNTA
+    atualizarTimer()
+
+    timerInterval = setInterval(() => {
+      timeLeft--
+      tempoGasto++
+      atualizarTimer()
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval)
+        respostaAutomatica()
+      }
+    }, 1000)
+  }
+}
+
+function finalizarQuiz() {
+  clearInterval(timerInterval)
+
+  const total = quiz.perguntas.length
+  const acertos = answers.filter((a, i) => a === quiz.perguntas[i].correta).length
+  const pct = Math.round((acertos / total) * 100)
+
+  const cfg = quiz.configXp || {
+    xpPorAcerto: 10,
+    bonusTempoRapido: 0,
+    tempoLimiteBonus: 60
+  }
+
+  const bonusTempo = tempoGasto <= Number(cfg.tempoLimiteBonus || 60)
+    ? Number(cfg.bonusTempoRapido || 0)
+    : 0
+
+  const quizzesFeitos = pegarQuizzesFeitos()
+  const jaFeito = quizzesFeitos.some(
+    f => f.email === usuario.email && String(f.quizId) === String(quiz.id)
+  )
+
+  const xpGanho = jaFeito ? 0 : acertos * Number(cfg.xpPorAcerto || 10) + bonusTempo
+
+  if (!jaFeito) {
+    quizzesFeitos.push({
+      quizId: quiz.id,
+      email: usuario.email,
+      titulo: quiz.titulo,
+      tempo: tempoGasto,
+      acertos,
+      xpGanho
+    })
+
+    salvarQuizzesFeitos(quizzesFeitos)
+
+    let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]')
+    const idx = usuarios.findIndex(u => u.email === usuario.email)
+
+    if (idx !== -1) {
+      let xp = Number(usuarios[idx].xp || 0) + xpGanho
+      let nivel = Number(usuarios[idx].nivel || 1)
+
+      while (xp >= 100) {
+        xp -= 100
+        nivel++
+      }
+
+      usuarios[idx].xp = xp
+      usuarios[idx].nivel = nivel
+      usuario.xp = xp
+      usuario.nivel = nivel
+
+      localStorage.setItem('usuarios', JSON.stringify(usuarios))
+      localStorage.setItem('usuarioLogado', JSON.stringify(usuario))
+    }
+  }
+
+  document.getElementById('xp-badge').textContent = jaFeito
+    ? '⭐ Quiz já realizado — XP não concedido'
+    : `⭐ +${xpGanho} XP ganho!`
+
+  document.getElementById('final-score').textContent = acertos
+  document.getElementById('final-total').textContent = `de ${total}`
+  document.getElementById('result-title').textContent =
+    pct >= 70 ? 'Ótimo trabalho! 🎉' : 'Continue praticando 💪'
+
+  document.getElementById('result-sub').textContent =
+    `Você acertou ${acertos} de ${total} questões e obteve ${pct}% de aproveitamento.`
+
+  document.getElementById('r-acertos').textContent = acertos
+  document.getElementById('r-erros').textContent = total - acertos
+  document.getElementById('r-pct').textContent = pct + '%'
+
+  const offset = 326.7 - (326.7 * pct / 100)
+  setTimeout(() => {
+    const ringArc = document.getElementById('ring-arc')
+    ringArc.setAttribute('stroke-dashoffset', offset)
+    ringArc.style.transition = 'stroke-dashoffset .8s ease'
+  }, 100)
+
+  document.getElementById('result-overlay').classList.add('show')
+}
+
+document.getElementById('btn-prev').addEventListener('click', () => {
+  if (current > 0) {
+    current--
+    renderQuestion()
+  }
+})
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (!answered[current]) return
+
+  if (current === quiz.perguntas.length - 1) {
+    finalizarQuiz()
+    return
+  }
+
+  current++
+  renderQuestion()
+})
+
+document.getElementById('btn-reiniciar').addEventListener('click', () => {
+  current = 0
+  answers = new Array(quiz.perguntas.length).fill(null)
+  answered = new Array(quiz.perguntas.length).fill(false)
+  pontuacaoTotal = 0
+  tempoGasto = 0
+  document.getElementById('score-chips').textContent = '0 pts'
+  document.getElementById('ring-arc').setAttribute('stroke-dashoffset', '326.7')
+  document.getElementById('result-overlay').classList.remove('show')
+  renderQuestion()
+})
+
+document.getElementById('btn-voltar-catalogo').addEventListener('click', () => {
+  localStorage.removeItem('quizAtual')
+  window.location.href = 'quizzes.html'
+})
+
+
+renderQuestion()
+</script>
+
+</body>
+</html>
