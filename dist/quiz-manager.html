@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gamify Training – Criar Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#e6edf4;--bg-inner:#dde6f0;--white:#ffffff;
+  --navy:#0d1b2e;--navy-mid:#1e2d42;
+  --teal:#136f71;--teal-dark:#0d5557;--teal-light:#e8f4f4;
+  --blue:#2463eb;--blue-dark:#1a4fd1;--blue-light:#eef3fd;
+  --gray:#6b7a8f;--gray-light:#f1f5f9;--border:#d1dbe8;
+  --danger:#dc2626;--success:#16a34a;--warning:#d97706;
+  --radius-sm:8px;--radius:14px;--radius-lg:20px;
+  --shadow:0 4px 24px rgba(13,27,46,.08);--shadow-lg:0 8px 40px rgba(13,27,46,.12);
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;}
+nav{background:var(--white);border-radius:var(--radius-lg);margin:16px 24px;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.nav-logo{background:var(--teal);color:white;font-size:10px;font-weight:800;letter-spacing:.5px;padding:6px 8px;border-radius:8px;line-height:1.3;text-align:center;}
+.nav-name{font-weight:700;font-size:15px;color:var(--navy);}
+.nav-links{display:flex;gap:28px;}
+.nav-links a{font-size:14px;font-weight:500;color:var(--gray);text-decoration:none;cursor:pointer;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--navy);}
+.main-wrap{padding:0 24px 40px;max-width:1140px;margin:0 auto;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.page-title{font-size:26px;font-weight:800;color:var(--navy);}
+.page-subtitle{font-size:14px;color:var(--gray);margin-top:2px;}
+.header-actions{display:flex;gap:10px;flex-shrink:0;}
+.creator-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;}
+.card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.icon-teal{background:var(--teal-light);color:var(--teal);}
+.icon-blue{background:var(--blue-light);color:var(--blue);}
+label{display:block;font-size:13px;font-weight:600;color:var(--navy-mid);margin-bottom:6px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--navy);background:var(--white);transition:border-color .2s,box-shadow .2s;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(19,111,113,.1);}
+textarea{resize:vertical;min-height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-group{margin-bottom:14px;}
+.question-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;transition:border-color .2s,box-shadow .2s;}
+.question-item:hover{border-color:var(--teal);box-shadow:0 2px 12px rgba(19,111,113,.08);}
+.question-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.question-num{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--teal);}
+.q-pill{background:var(--teal-light);padding:3px 10px;border-radius:20px;font-size:12px;}
+.q-type-pill{background:var(--bg-inner);color:var(--gray);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.question-actions{display:flex;gap:8px;}
+.btn-icon{width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--gray);transition:all .2s;}
+.btn-icon:hover{border-color:var(--danger);color:var(--danger);background:#fef2f2;}
+.alternatives-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.alt-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--gray-light);cursor:pointer;transition:all .2s;}
+.alt-item.correct{border-color:var(--success);background:#f0fdf4;}
+.alt-item input[type=radio]{accent-color:var(--success);flex-shrink:0;pointer-events:none;}
+.alt-item input[type=text]{border:none;background:transparent;padding:0;font-size:13px;flex:1;cursor:text;}
+.alt-item input[type=text]:focus{box-shadow:none;}
+.alt-label{width:22px;height:22px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--navy-mid);flex-shrink:0;}
+.alt-item.correct .alt-label{background:var(--success);color:white;}
+.correct-hint{margin-top:8px;font-size:12px;color:var(--gray);font-weight:600;}
+.correct-hint.is-set{color:var(--success);}
+.add-question-btn{width:100%;padding:14px;border:2px dashed var(--teal);border-radius:var(--radius);background:var(--teal-light);color:var(--teal);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;}
+.add-question-btn:hover{background:var(--teal);color:white;}
+.badge-tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);margin:4px 4px 4px 0;background:var(--white);color:var(--gray);}
+.badge-tag.selected{background:var(--teal);color:white;border-color:var(--teal);}
+.progress-bar{height:6px;background:var(--bg-inner);border-radius:3px;margin:8px 0 4px;}
+.progress-fill{height:100%;border-radius:3px;background:var(--teal);transition:width .3s;}
+.btn-primary{width:100%;padding:13px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s,transform .1s;margin-top:6px;}
+.btn-primary:hover{background:var(--blue-dark);transform:translateY(-1px);}
+.btn-secondary{width:100%;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--white);color:var(--navy);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:8px;}
+.btn-secondary:hover{border-color:var(--navy);}
+.btn-cancel{padding:10px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--white);color:var(--navy);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-cancel:hover{border-color:var(--navy);}
+.btn-publish{padding:10px 24px;border-radius:var(--radius-sm);border:none;background:var(--blue);color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s,transform .1s;}
+.btn-publish:hover{background:var(--blue-dark);transform:translateY(-1px);}
+.info-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:7px 0;border-bottom:1px solid var(--bg-inner);color:var(--gray);}
+.info-row:last-child{border-bottom:none;}
+.info-row strong{color:var(--navy);font-weight:600;}
+#msg-global{text-align:center;font-size:14px;font-weight:600;min-height:20px;margin-bottom:12px;}
+@media(max-width:860px){.creator-layout{grid-template-columns:1fr;}.alternatives-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
+
+/* MODAL DE SAÍDA COM RASCUNHO */
+.modalOverlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 27, 46, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 99999;
+}
+
+.modalOverlay.show{
+  display: flex;
+}
+
+.modalBox{
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  animation: modalPop .25s ease;
+}
+
+@keyframes modalPop{
+  from{
+    transform: scale(.96);
+    opacity: 0;
+  }
+  to{
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modalBox h2{
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #0d1b2e;
+}
+
+.modalBox p{
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4b5563;
+  margin-bottom: 22px;
+}
+
+.modalAcoes{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btnModal{
+  flex: 1 1 160px;
+  min-width: 160px;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.btnModalSec{
+  background: #fff;
+  color: #0d1b2e;
+  border: 1.5px solid #d1dbe8;
+}
+
+.btnModalWarn{
+  background: #2563EB;
+  color: #fff;
+}
+
+.btnModalDanger{
+  background: #dc2626;
+  color: #fff;
+  flex: 1 1 100%;
+}
+
+</style>
+  <script type="module" crossorigin src="/assets/quizManager-CRCiyZIt.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-Btlm8H0F.js">
+  <link rel="modulepreload" crossorigin href="/assets/storage-CAu5-KaA.js">
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo"></div>
+    <span class="nav-name">Gamify Training</span>
+  </div>
+  <div class="nav-links">
+    <a id="nav-voltar"> Sair </a>
+  </div>
+</nav>
+
+<div class="main-wrap">
+  <div class="page-header">
+    <div>
+      <div class="page-title" id="page-title-text">Criar Quiz</div>
+      <div class="page-subtitle">Configure as perguntas, alternativas e parâmetros do quiz</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-cancel" id="btn-cancelar">Cancelar</button>
+      <button class="btn-publish" id="btn-publicar-topo">Publicar Quiz ✓</button>
+    </div>
+  </div>
+
+  <p id="msg-global"></p>
+
+  <div class="creator-layout">
+    <!-- COLUNA PRINCIPAL -->
+    <div>
+      <div class="card">
+        <div class="card-title"><div class="icon icon-teal">📋</div> Informações gerais</div>
+        <div class="form-group">
+          <label>Título do quiz *</label>
+          <input type="text" id="tituloQuiz" placeholder="Ex.: Fundamentos de LGPD – Módulo 1">
+        </div>
+        <div class="form-row">
+          <div>
+            <label>XP por acerto</label>
+            <input type="number" id="xpPorAcerto" value="10" min="0">
+          </div>
+          <div>
+            <label>Bônus XP por tempo rápido</label>
+            <input type="number" id="bonusTempoRapido" value="5" min="0">
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>Tempo limite para bônus (seg)</label>
+            <input type="number" id="tempoLimiteBonus" value="30" min="5">
+          </div>
+          <div>
+            <label>Tempo por pergunta (seg)</label>
+            <input type="number" id="tempoPorPergunta" value="30" min="5" max="300">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><div class="icon icon-blue">❓</div> Perguntas</div>
+        <div id="questions-container"></div>
+        <button class="add-question-btn" id="btn-add-q">
+          <span style="font-size:18px">+</span> Adicionar nova pergunta
+        </button>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div>
+      <div class="card">
+        <div class="card-title"><div class="icon icon-blue">📊</div> Status do quiz</div>
+        <div class="info-row"><span>Perguntas</span><strong id="st-total">0</strong></div>
+        <div class="info-row"><span>Com gabarito</span><strong id="st-gabarito">0 / 0</strong></div>
+        <div class="info-row"><span>Modo</span><strong id="st-modo">Novo quiz</strong></div>
+        <div style="margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:6px;">
+            <span style="color:var(--gray)">Completude</span>
+            <span style="color:var(--teal)" id="st-pct">0%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="st-bar" style="width:0%"></div></div>
+        </div>
+        <button class="btn-secondary" id="btn-rascunho">💾 Salvar rascunho</button>
+        <button class="btn-primary" id="btn-publicar">🚀 Publicar quiz</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><div class="icon icon-teal">👥</div> Setor-alvo</div>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:10px;">O quiz será visível para funcionários do mesmo setor do gerente.</p>
+        <span class="badge-tag selected" id="setor-badge">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modalOverlay" id="modalSaidaRascunho">
+  <div class="modalBox">
+    <h2 id="modalSaidaTitulo">Sair do editor</h2>
+    <p id="modalSaidaTexto">
+      Existe um rascunho salvo deste quiz. O que você deseja fazer?
+    </p>
+
+    <div class="modalAcoes">
+      <button id="btnContinuarEditando" class="btnModal btnModalSec">
+        Continuar editando
+      </button>
+
+      <button id="btnSairMantendo" class="btnModal btnModalWarn">
+        Sair e manter rascunho
+      </button>
+
+      <button id="btnSairExcluindo" class="btnModal btnModalDanger">
+        Sair e excluir rascunho
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

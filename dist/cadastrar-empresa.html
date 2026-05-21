@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamify Training — Cadastrar Empresa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script type="module" crossorigin src="/assets/cadastrarEmpresa-BCnxYhC-.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-Btlm8H0F.js">
+  <link rel="modulepreload" crossorigin href="/assets/storage-CAu5-KaA.js">
+  <link rel="stylesheet" crossorigin href="/assets/style-e6ip2nUV.css">
+</head>
+<body>
+
+  <header class="gt-header" aria-label="Cabeçalho principal">
+    <a href="index.html" class="gt-brand">
+      <img src="/assets/logo%20sem%20texto-DePobXS_.jpg" alt="Logo da Gamify Training" class="gt-brand__logo">
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Treinamento corporativo gamificado</span>
+      </div>
+    </a>
+
+    <nav class="gt-nav" aria-label="Navegação principal">
+      <a href="index.html">Início</a>
+      <a href="login.html">Login</a>
+      <a href="cadastro.html" class="is-active">Cadastro</a>
+    </nav>
+
+    <div class="gt-header__actions">
+      <a href="login.html" class="gt-header__cta">Entrar</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card" style="max-width:460px;">
+      <div>
+        <h1 style="color:var(--teal); font-size:24px; font-weight:800; margin-bottom:4px;">Cadastrar Empresa</h1>
+        <p style="font-size:13px; color:var(--text-3)">Crie sua organização e comece a treinar sua equipe</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div><label>Nome da empresa</label><input type="text" id="nomeEmpresa" placeholder="Ex: Acme Corp"></div>
+        <div>
+          <label>Setores <span style="font-weight:400; color:var(--text-4)">(separados por vírgula)</span></label>
+          <input type="text" id="setores" placeholder="TI, RH, Comercial, Operações">
+        </div>
+        <div style="border-top:1px solid var(--border); padding-top:14px;">
+          <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--teal); margin-bottom:12px;">Dados do administrador</p>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div><label>Seu nome</label><input type="text" id="nome" placeholder="Nome completo"></div>
+            <div><label>Email</label><input type="email" id="email" placeholder="admin@empresa.com"></div>
+            <div><label>Senha</label><input type="password" id="senha" placeholder="••••••••"></div>
+          </div>
+        </div>
+      </div>
+
+      <button id="btnCadastrarEmpresa" style="width:100%; background:var(--teal); box-shadow:var(--shadow-teal); padding:13px;">
+        Criar empresa
+      </button>
+
+      <p id="mensagem" style="text-align:center;"></p>
+    </div>
+  </div>
+</body>
+</html>

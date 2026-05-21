@@ -1,0 +1,1 @@
+var e=document.getElementById(`logout`);e&&e.addEventListener(`click`,()=>{localStorage.removeItem(`usuarioLogado`),window.location.href=`login.html`});

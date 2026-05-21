@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamify Training — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script type="module" crossorigin src="/assets/dashboard-DDVPzgTy.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-Btlm8H0F.js">
+  <link rel="modulepreload" crossorigin href="/assets/logout-4jO_44-N.js">
+  <link rel="modulepreload" crossorigin href="/assets/storage-CAu5-KaA.js">
+  <link rel="stylesheet" crossorigin href="/assets/style-e6ip2nUV.css">
+</head>
+<body>
+
+  <header class="gt-header gt-header--internal" aria-label="Cabeçalho principal">
+    <a href="dashboard.html" class="gt-brand">
+      <img src="/assets/logo%20sem%20texto-DePobXS_.jpg" alt="Logo da Gamify Training" class="gt-brand__logo">
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Painel da plataforma</span>
+      </div>
+    </a>
+
+    <nav class="gt-nav" aria-label="Navegação principal">
+      <a href="dashboard.html" class="is-active">Painel</a>
+      <a href="leaderboard.html">Ranking</a>
+      <a href="quizzes.html">Quizzes</a>
+    </nav>
+
+    <div class="gt-header__actions">
+      <a href="index.html" class="gt-header__cta">Sair</a>
+    </div>
+  </header>
+
+  <div class="dashboard">
+
+    <div class="topo">
+      <h1>Dashboard</h1>
+      <button id="logout">Sair</button>
+    </div>
+
+    <div class="info">
+      <h2 id="nomeUsuario"></h2>
+      <p id="empresaUsuario"></p>
+      <p id="tipoUsuario"></p>
+      <p id="setorUsuario"></p>
+    </div>
+
+    <div class="xpCard">
+      <h3>Progresso — XP</h3>
+      <div class="barra"><div class="progresso" id="barraXP"></div></div>
+      <p id="xpTexto" style="margin-top:10px; font-weight:600; color:var(--teal);"></p>
+    </div>
+
+    <div class="cardPainel">
+      <button id="visualizarQuizzes" style="background:var(--teal); box-shadow:var(--shadow-teal);">Visualizar Quizzes</button>
+      <button id="abrirLeaderboard" class="btn-ghost">Ver Leaderboard</button>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Gamify Training — Painel do Gerente</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <script type="module" crossorigin src="/assets/gerente-DX6WJ3CS.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-Btlm8H0F.js">
+  <link rel="stylesheet" crossorigin href="/assets/style-e6ip2nUV.css">
+</head>
+
+<body>
+
+  <header
+    class="gt-header gt-header--internal"
+    aria-label="Cabeçalho principal"
+  >
+
+    <a href="dashboard.html" class="gt-brand">
+
+      <img
+        src="/assets/logo%20sem%20texto-DePobXS_.jpg"
+        alt="Logo da Gamify Training"
+        class="gt-brand__logo"
+      >
+
+      <div class="gt-brand__text">
+        <strong>Gamify Training</strong>
+        <span>Painel da plataforma</span>
+      </div>
+
+    </a>
+
+    <nav
+      class="gt-nav"
+      aria-label="Navegação principal"
+    >
+
+      <a
+        href="quiz-manager.html"
+        class="is-active"
+      >
+        Criar Quizz
+      </a>
+
+      <a href="leaderboard.html">
+        Ranking
+      </a>
+
+      <a href="gerenciar-quizzes.html">
+        Quizzes
+      </a>
+
+    </nav>
+
+    <div class="gt-header__actions">
+
+      <a
+        href="index.html"
+        class="gt-header__cta"
+      >
+        Sair
+      </a>
+
+    </div>
+
+  </header>
+
+  <div class="dashboard">
+
+    <div class="topo">
+
+      <h1>Painel do Gerente</h1>
+
+      <button id="logout">
+        Sair
+      </button>
+
+    </div>
+
+    <div
+      class="info"
+      id="infoUsuario"
+    >
+
+      <h2 id="nomeUsuario"></h2>
+
+      <p id="empresaUsuario"></p>
+
+      <p id="tipoUsuario"></p>
+
+      <p id="setorUsuario"></p>
+
+    </div>
+
+    <div class="cardPainel">
+
+      <p style="
+        font-size:12px;
+        font-weight:700;
+        text-transform:uppercase;
+        letter-spacing:.08em;
+        color:var(--teal);
+        margin-bottom:4px;
+      ">
+        Ações
+      </p>
+
+      <button
+        id="gerarFuncionario"
+        style="
+          background:var(--teal);
+          box-shadow:var(--shadow-teal);
+        "
+      >
+        Gerar Código Funcionário
+      </button>
+
+      <button id="abrirQuiz">
+        Criar Quiz
+      </button>
+
+      <button
+        id="gerenciarQuizzes"
+        class="btn-ghost"
+      >
+        Gerenciar Quizzes
+      </button>
+
+      <button
+        id="abrirArquivados"
+        class="btn-ghost"
+      >
+        Quizzes Arquivados
+      </button>
+
+      <button
+        id="abrirLeaderboard"
+        class="btn-ghost"
+      >
+        Ver Leaderboard
+      </button>
+
+      <div id="resultado"></div>
+
+    </div>
+
+  </div>
+
+
+</body>
+</html>
