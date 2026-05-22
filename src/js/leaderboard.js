@@ -1,37 +1,29 @@
-const usuario = JSON.parse(
-  localStorage.getItem('usuarioLogado') || 'null'
-)
+function lerStorage(chave, valorPadrao) {
+  try {
+    const valor = localStorage.getItem(chave)
+    if (valor === null) return valorPadrao
+    return JSON.parse(valor)
+  } catch (erro) {
+    console.error(`Erro ao ler ${chave} do localStorage:`, erro)
+    return valorPadrao
+  }
+}
+
+const usuario = lerStorage('usuarioLogado', null)
 
 if (!usuario) {
   window.location.href = 'login.html'
 }
 
-const usuarios = JSON.parse(
-  localStorage.getItem('usuarios')
-) || []
+const usuarios = lerStorage('usuarios', [])
+const quizzes = lerStorage('quizzes', [])
+const quizzesFeitos = lerStorage('quizzesFeitos', [])
 
-const quizzes = JSON.parse(
-  localStorage.getItem('quizzes')
-) || []
-
-const quizzesFeitos = JSON.parse(
-  localStorage.getItem('quizzesFeitos')
-) || []
-
-const voltarPagina =
-  document.getElementById('voltarPagina')
-
-const tituloLeaderboard =
-  document.getElementById('tituloLeaderboard')
-
-const subtituloLeaderboard =
-  document.getElementById('subtituloLeaderboard')
-
-const leaderboardBody =
-  document.getElementById('leaderboardBody')
-
-const mensagemLeaderboard =
-  document.getElementById('mensagemLeaderboard')
+const voltarPagina = document.getElementById('voltarPagina')
+const tituloLeaderboard = document.getElementById('tituloLeaderboard')
+const subtituloLeaderboard = document.getElementById('subtituloLeaderboard')
+const leaderboardBody = document.getElementById('leaderboardBody')
+const mensagemLeaderboard = document.getElementById('mensagemLeaderboard')
 
 if (voltarPagina) {
   voltarPagina.addEventListener('click', () => {
@@ -46,9 +38,7 @@ if (voltarPagina) {
 }
 
 function formatarTempo(segundos) {
-  if (!segundos || segundos <= 0) {
-    return '-'
-  }
+  if (!segundos || segundos <= 0) return '-'
 
   const minutos = Math.floor(segundos / 60)
   const resto = segundos % 60
@@ -56,10 +46,26 @@ function formatarTempo(segundos) {
   return `${String(minutos).padStart(2, '0')}:${String(resto).padStart(2, '0')}`
 }
 
-function calcularTaxaAcertoNumero(registrosUsuario) {
-  if (registrosUsuario.length === 0) {
-    return 0
+function normalizarTipo(tipo) {
+  return String(tipo || '').trim().toLowerCase()
+}
+
+function ehFuncionario(item) {
+  const tipo = normalizarTipo(item.tipo)
+
+  if (tipo === 'funcionario' || tipo === 'funcionário' || tipo === 'employee') {
+    return true
   }
+
+  if (!tipo && item.setor) {
+    return true
+  }
+
+  return false
+}
+
+function calcularTaxaAcertoNumero(registrosUsuario) {
+  if (registrosUsuario.length === 0) return 0
 
   let totalAcertos = 0
   let totalPerguntas = 0
@@ -68,25 +74,22 @@ function calcularTaxaAcertoNumero(registrosUsuario) {
     totalAcertos += Number(registro.acertos || 0)
 
     const quiz = quizzes.find(item =>
-      item.titulo === registro.titulo
+      item.titulo === registro.titulo ||
+      item.id === registro.quizId
     )
 
-    if (quiz) {
+    if (quiz && Array.isArray(quiz.perguntas)) {
       totalPerguntas += quiz.perguntas.length
     }
   })
 
-  if (totalPerguntas === 0) {
-    return 0
-  }
+  if (totalPerguntas === 0) return 0
 
   return Math.round((totalAcertos / totalPerguntas) * 100)
 }
 
 function calcularTempoMedioNumero(registrosUsuario) {
-  if (registrosUsuario.length === 0) {
-    return 0
-  }
+  if (registrosUsuario.length === 0) return 0
 
   const somaTempo = registrosUsuario.reduce((total, item) => {
     return total + Number(item.tempo || 0)
@@ -115,89 +118,56 @@ function obterClasseTempo(tempoMedio) {
 }
 
 function obterMedalha(posicao) {
-  if (posicao === 0) {
-    return '<span class="medalha medalhaOuro">🥇 1º</span>'
-  }
-
-  if (posicao === 1) {
-    return '<span class="medalha medalhaPrata">🥈 2º</span>'
-  }
-
-  if (posicao === 2) {
-    return '<span class="medalha medalhaBronze">🥉 3º</span>'
-  }
-
-  return `<span class="rankNumero">${posicao + 1}º</span>`
+  if (posicao === 0) return '🥇 1º'
+  if (posicao === 1) return '🥈 2º'
+  if (posicao === 2) return '🥉 3º'
+  return `${posicao + 1}º`
 }
 
 function filtrarFuncionariosVisiveis() {
-  const funcionarios = usuarios.filter(item =>
-    item.tipo === 'funcionario' &&
-    item.empresaId === usuario.empresaId
-  )
+  const funcionarios = usuarios.filter(item => {
+    return Number(item.empresaId) === Number(usuario.empresaId) && ehFuncionario(item)
+  })
 
   if (usuario.tipo === 'dono') {
     tituloLeaderboard.innerText = 'Ranking geral da empresa'
-    subtituloLeaderboard.innerText =
-      'Todos os funcionários da empresa'
+    subtituloLeaderboard.innerText = 'Todos os funcionários da empresa'
     return funcionarios
   }
 
   if (usuario.tipo === 'gerente') {
     tituloLeaderboard.innerText = 'Ranking do setor'
-    subtituloLeaderboard.innerText =
-      `Funcionários do setor ${usuario.setor}`
-    return funcionarios.filter(item =>
-      item.setor === usuario.setor
-    )
+    subtituloLeaderboard.innerText = `Funcionários do setor ${usuario.setor}`
+    return funcionarios.filter(item => item.setor === usuario.setor)
   }
 
   tituloLeaderboard.innerText = 'Ranking do seu setor'
-  subtituloLeaderboard.innerText =
-    `Comparativo entre funcionários do setor ${usuario.setor}`
-
-  return funcionarios.filter(item =>
-    item.setor === usuario.setor
-  )
+  subtituloLeaderboard.innerText = `Comparativo entre funcionários do setor ${usuario.setor}`
+  return funcionarios.filter(item => item.setor === usuario.setor)
 }
 
 function obterQuizzesDisponiveis(funcionario) {
-  return quizzes.filter(quiz =>
-    quiz.empresaId === funcionario.empresaId &&
-    quiz.setor === funcionario.setor
-  )
+  return quizzes.filter(quiz => {
+    return Number(quiz.empresaId) === Number(funcionario.empresaId) &&
+      quiz.setor === funcionario.setor
+  })
 }
 
 function montarDadosLeaderboard() {
   const funcionarios = filtrarFuncionariosVisiveis()
 
   return funcionarios.map(funcionario => {
-    const registrosUsuario = quizzesFeitos.filter(item =>
-      item.email === funcionario.email
-    )
-
-    const quizzesDisponiveis =
-      obterQuizzesDisponiveis(funcionario)
-
-    const quizzesFeitosCount =
-      registrosUsuario.length
-
-    const quizzesPendentes =
-      Math.max(
-        quizzesDisponiveis.length - quizzesFeitosCount,
-        0
-      )
-
-    const taxaAcertoNumero =
-      calcularTaxaAcertoNumero(registrosUsuario)
-
-    const tempoMedioNumero =
-      calcularTempoMedioNumero(registrosUsuario)
+    const registrosUsuario = quizzesFeitos.filter(item => item.email === funcionario.email)
+    const quizzesDisponiveis = obterQuizzesDisponiveis(funcionario)
+    const quizzesFeitosCount = registrosUsuario.length
+    const quizzesPendentes = Math.max(quizzesDisponiveis.length - quizzesFeitosCount, 0)
+    const taxaAcertoNumero = calcularTaxaAcertoNumero(registrosUsuario)
+    const tempoMedioNumero = calcularTempoMedioNumero(registrosUsuario)
 
     return {
       nome: funcionario.nome,
       email: funcionario.email,
-      setor: funcionario.setor,
+      setor: funcionario.setor || '-',
       nivel: Number(funcionario.nivel || 1),
       xp: Number(funcionario.xp || 0),
       quizzesFeitos: quizzesFeitosCount,
@@ -206,22 +176,10 @@ function montarDadosLeaderboard() {
       tempoMedioNumero
     }
   }).sort((a, b) => {
-    if (b.nivel !== a.nivel) {
-      return b.nivel - a.nivel
-    }
-
-    if (b.xp !== a.xp) {
-      return b.xp - a.xp
-    }
-
-    if (a.quizzesPendentes !== b.quizzesPendentes) {
-      return a.quizzesPendentes - b.quizzesPendentes
-    }
-
-    if (b.taxaAcertoNumero !== a.taxaAcertoNumero) {
-      return b.taxaAcertoNumero - a.taxaAcertoNumero
-    }
-
+    if (b.nivel !== a.nivel) return b.nivel - a.nivel
+    if (b.xp !== a.xp) return b.xp - a.xp
+    if (a.quizzesPendentes !== b.quizzesPendentes) return a.quizzesPendentes - b.quizzesPendentes
+    if (b.taxaAcertoNumero !== a.taxaAcertoNumero) return b.taxaAcertoNumero - a.taxaAcertoNumero
     return a.nome.localeCompare(b.nome)
   })
 }
@@ -233,51 +191,24 @@ function renderizarLeaderboard() {
   mensagemLeaderboard.innerText = ''
 
   if (dados.length === 0) {
-    mensagemLeaderboard.innerText =
-      'Nenhum funcionário encontrado para este ranking'
+    mensagemLeaderboard.innerText = 'Nenhum funcionário encontrado para este ranking'
     return
   }
 
   dados.forEach((item, index) => {
-    const linhaUsuarioLogado =
-      item.email === usuario.email ? 'linhaAtual' : ''
+    const linhaUsuarioLogado = item.email === usuario.email ? 'linhaAtual' : ''
 
     leaderboardBody.innerHTML += `
       <tr class="${linhaUsuarioLogado}">
         <td>${obterMedalha(index)}</td>
-        <td>
-          <div class="nomeRanking">
-            <strong>${item.nome}</strong>
-            ${item.email === usuario.email ? '<span class="tagVoce">Você</span>' : ''}
-          </div>
-        </td>
-        <td>
-          <span class="badgeTabela badgeNeutro">${item.setor}</span>
-        </td>
-        <td>
-          <span class="badgeTabela badgeNivel">Nv. ${item.nivel}</span>
-        </td>
-        <td>
-          <span class="badgeTabela badgeXp">${item.xp}/100</span>
-        </td>
-        <td>
-          <span class="badgeTabela badgeSucesso">${item.quizzesFeitos}</span>
-        </td>
-        <td>
-          <span class="badgeTabela ${obterClassePendencia(item.quizzesPendentes)}">
-            ${item.quizzesPendentes}
-          </span>
-        </td>
-        <td>
-          <span class="badgeTabela ${obterClasseAcerto(item.taxaAcertoNumero)}">
-            ${item.taxaAcertoNumero}%
-          </span>
-        </td>
-        <td>
-          <span class="badgeTabela ${obterClasseTempo(item.tempoMedioNumero)}">
-            ${formatarTempo(item.tempoMedioNumero)}
-          </span>
-        </td>
+        <td>${item.nome}</td>
+        <td>${item.setor}</td>
+        <td>${item.nivel}</td>
+        <td>${item.xp}</td>
+        <td>${item.quizzesFeitos}</td>
+        <td><span class="${obterClassePendencia(item.quizzesPendentes)}">${item.quizzesPendentes}</span></td>
+        <td><span class="${obterClasseAcerto(item.taxaAcertoNumero)}">${item.taxaAcertoNumero}%</span></td>
+        <td><span class="${obterClasseTempo(item.tempoMedioNumero)}">${formatarTempo(item.tempoMedioNumero)}</span></td>
       </tr>
     `
   })
