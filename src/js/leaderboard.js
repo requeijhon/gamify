@@ -117,11 +117,33 @@ function obterClasseTempo(tempoMedio) {
   return 'badgePerigo'
 }
 
-function obterMedalha(posicao) {
-  if (posicao === 0) return '🥇 1º'
-  if (posicao === 1) return '🥈 2º'
-  if (posicao === 2) return '🥉 3º'
-  return `${posicao + 1}º`
+function obterMedalhaHtml(posicao) {
+  if (posicao === 0) {
+    return `<span class="medalha medalhaOuro">🥇 1º</span>`
+  }
+
+  if (posicao === 1) {
+    return `<span class="medalha medalhaPrata">🥈 2º</span>`
+  }
+
+  if (posicao === 2) {
+    return `<span class="medalha medalhaBronze">🥉 3º</span>`
+  }
+
+  return `<span class="rankNumero">${posicao + 1}º</span>`
+}
+
+function montarNomeHtml(item) {
+  const tagVoce = item.email === usuario.email
+    ? `<span class="tagVoce">Você</span>`
+    : ''
+
+  return `
+    <div class="nomeRanking">
+      <span>${item.nome}</span>
+      ${tagVoce}
+    </div>
+  `
 }
 
 function filtrarFuncionariosVisiveis() {
@@ -187,6 +209,8 @@ function montarDadosLeaderboard() {
 function renderizarLeaderboard() {
   const dados = montarDadosLeaderboard()
 
+  if (!leaderboardBody || !mensagemLeaderboard) return
+
   leaderboardBody.innerHTML = ''
   mensagemLeaderboard.innerText = ''
 
@@ -200,15 +224,15 @@ function renderizarLeaderboard() {
 
     leaderboardBody.innerHTML += `
       <tr class="${linhaUsuarioLogado}">
-        <td>${obterMedalha(index)}</td>
-        <td>${item.nome}</td>
+        <td>${obterMedalhaHtml(index)}</td>
+        <td>${montarNomeHtml(item)}</td>
         <td>${item.setor}</td>
-        <td>${item.nivel}</td>
-        <td>${item.xp}</td>
-        <td>${item.quizzesFeitos}</td>
-        <td><span class="${obterClassePendencia(item.quizzesPendentes)}">${item.quizzesPendentes}</span></td>
-        <td><span class="${obterClasseAcerto(item.taxaAcertoNumero)}">${item.taxaAcertoNumero}%</span></td>
-        <td><span class="${obterClasseTempo(item.tempoMedioNumero)}">${formatarTempo(item.tempoMedioNumero)}</span></td>
+        <td><span class="badgeTabela badgeNivel">${item.nivel}</span></td>
+        <td><span class="badgeTabela badgeXp">${item.xp}</span></td>
+        <td><span class="badgeTabela badgeNeutro">${item.quizzesFeitos}</span></td>
+        <td><span class="badgeTabela ${obterClassePendencia(item.quizzesPendentes)}">${item.quizzesPendentes}</span></td>
+        <td><span class="badgeTabela ${obterClasseAcerto(item.taxaAcertoNumero)}">${item.taxaAcertoNumero}%</span></td>
+        <td><span class="badgeTabela ${obterClasseTempo(item.tempoMedioNumero)}">${formatarTempo(item.tempoMedioNumero)}</span></td>
       </tr>
     `
   })
